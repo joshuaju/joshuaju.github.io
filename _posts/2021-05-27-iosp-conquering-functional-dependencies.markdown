@@ -7,16 +7,15 @@ categories: architecture
 
 There are lots of well-known programming principles which you have probably already heard about… the SOLID principles, “Don’t Repeat Yourself” (DRY), “Keep it Simple, Stupid” (KISS), “You ain’t gonna need it” (YAGNI) and so on. In this post I’ll introduce you to a principle not commonly found in literature: the “Integration Operation Segregation Principle” (IOSP).
 
-I’ve been introduced to this principle by clean code coach Ralf Westphal, who was the first to write about it in 2013. If you happen to speak German and want to explore the principle’s origins you should head over to Software fraktal – Funktionale Abhängigkeit entschärfen.
+I’ve been introduced to this principle by clean code coach Ralf Westphal, who was the first to write about it in 2013. If you happen to speak German and want to explore the principle’s origins you should head over to ![Software fraktal – Funktionale Abhängigkeit entschärfen](https://blog.ralfw.de/2013/04/software-fraktal-funktionale.html).
 
-> Functions shall either only contain logic or they shall only call other functions. -- Ralf Westphal, Integration Operation Segregation Principle
+> Functions shall either only contain logic or they shall only call other functions. -- Ralf Westphal, ![Integration Operation Segregation Principle](https://programming-with-ease.circle.so/c/articles/integration-operation-segregation-principle)
 
-Let me put this somewhat more verbose: Functions shall either be an operation or an integration. An operation is a function containing only logic, where logic refers to control flow structures (e.g. if-else and while) and API calls to the standard or third-party libraries (e.g. System.out.println
-). An integration is a function containing only calls to other source code functions, i.e. operations and other integrations.
+Let me put this somewhat more verbose: Functions shall either be an operation or an integration. An operation is a function containing only logic, where logic refers to control flow structures (e.g. if-else and while) and API calls to the standard or third-party libraries (e.g. `System.out.println`). An integration is a function containing only calls to other source code functions, i.e. operations and other integrations.
 
 # Exploring IOSP
 
-Let’s explore this principle with an example: A customer wants you to process a text file to display the contained words. The words shall be displayed in uppercase and alphabetical order. For example, the file content “C b a c b A” should be displayed as “A B C”. A problem of that scale may be implemented in a single function and still be readable, but for the example’s sake let’s impose a three-layered architecture; presentation, business and data access. For now, let’s forget about IOSP and see what happens!
+Let’s explore this principle with an example: A customer wants you to process a text file to display the contained words. The words shall be displayed in uppercase and alphabetical order. For example, the file content “C b a c b A” should be displayed as “A B C”. A problem of that scale may be implemented in a single function and still be readable, but for the example’s sake let’s impose a **three-layered architecture**; presentation, business and data access. For now, let’s forget about IOSP and see what happens!
 
 ```java
 public class LayeredApp
@@ -66,10 +65,10 @@ public class LayeredApp
 
 Okay, nothing spectacular here. Some presentation details, processing logic and file access. Everything is nicely separated in modules/classes and dependencies run according to the three-layered architecture. Now, let’s get back to the IOSP and evaluate our functions.
 
-Two functions already conform to the IOSP; main
-is an integration, readText
-is an operation. However, displayWords
-and extractUniqueWords
+Two functions already conform to the IOSP; `main`
+is an integration, `readText`
+is an operation. However, `displayWords`
+and `extractUniqueWords`
 both violate the principle. They contain mostly logic, but also call another source code function. These hybrid functions are shown again in the following snippet with the offending lines highlighted.
 
 ```java
@@ -88,7 +87,7 @@ public Set<String> extractUniqueWords(String fileName)
 }
 ```
 
-Now that we’ve identified the offending functions, let’s refactor staying true to the IOSP. In the next snippet you will find that the main function has grown a little bit – it’s now the only integration. The hybrid functions turned into operations, which allowed the use of more specific method parameters.
+Now that we’ve identified the offending functions, let’s **refactor staying true to the IOSP**. In the next snippet you will find that the main function has grown a little bit – it’s now the only integration. The hybrid functions turned into operations, which allowed the use of more specific method parameters.
 
 ```java
 public class IOSPApp
@@ -138,19 +137,17 @@ public class IOSPApp
 
 You’ll find the two snippets at
 https://gist.github.com/joshuaju/f1949f8087b72227cdf9421a34525943.
+
 # Zooming out
 
-So what has happened here? Consider the dependency tree of the first implementation. main
-depends on displayWords
-, which depends on extractUniqueWords
-, which depends on readText
-. The dependencies are nested, going deeper and deeper.
+So what has happened here? Consider the dependency tree of the first implementation. `main` depends on `displayWords`, which depends on `extractUniqueWords`, which depends on `readText`. The dependencies are nested, going deeper and deeper.
 
-Now compare that to the dependency tree of the refactored code. main
-is the only function that depends on other functions. displayWords
-, extractUniqueWords
-and readText
-are operations, so by definition they are independent of other (source code) functions.
+![tree-after-iosp](/assets/boc_iosp_layered_app.png)
+
+Now compare that to the dependency tree of the refactored code. `main`
+is the only function that depends on other functions. `displayWords`, `extractUniqueWords` and `readText` are operations, so by definition they are independent of other (source code) functions.
+
+![tree-after-iosp](/assets/boc_iosp_iosp_app.png)
 
 On the surface the two solutions may look alike. After all, method names and logic haven’t changed too much. However, looking at the dependency trees it is clear that something has changed indeed. Code that was previously nested and inter-dependent is now shallow and decoupled.
 
@@ -186,7 +183,7 @@ public String DataAcess.readText(String fileName) { ... }
 
 When I first learned about the IOSP I couldn’t foresee the effect it would have on me. After using it for more than a year I can say that it has fundamentally transformed the way I work! To the extent that it has become my daily companion; present throughout designing, implementing, refactoring and reviewing code. It’s usually the IOSP guiding my decisions and leading me to better solutions.
 
-> If there is one principle in clean code development that’s my north star, then that’s the Integration Operation Segregation Principle, the IOSP. It guides my code design, it guides my code refactoring, it guides my code reviews. -- Ralf Westphal, Integration Operation Segregation Principle
+> If there is one principle in clean code development that’s my north star, then that’s the Integration Operation Segregation Principle, the IOSP. It guides my code design, it guides my code refactoring, it guides my code reviews. -- Ralf Westphal, ![Integration Operation Segregation Principle](https://programming-with-ease.circle.so/c/articles/integration-operation-segregation-principle)
 
 I’ve experienced that respecting the IOSP when designing code lead to higher collaboration. Features that would otherwise be implemented by 1-2 developers, could now be worked on by 4-5 without stepping on each other’s toes. This allowed features to be delivered quicker and to better distribute know-how between developers.
 
