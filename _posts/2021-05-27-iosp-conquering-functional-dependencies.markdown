@@ -7,9 +7,9 @@ categories: architecture
 
 There are lots of well-known programming principles which you have probably already heard about… the SOLID principles, “Don’t Repeat Yourself” (DRY), “Keep it Simple, Stupid” (KISS), “You ain’t gonna need it” (YAGNI) and so on. In this post I’ll introduce you to a principle not commonly found in literature: the “Integration Operation Segregation Principle” (IOSP).
 
-I’ve been introduced to this principle by clean code coach Ralf Westphal, who was the first to write about it in 2013. If you happen to speak German and want to explore the principle’s origins you should head over to ![Software fraktal – Funktionale Abhängigkeit entschärfen](https://blog.ralfw.de/2013/04/software-fraktal-funktionale.html).
+I’ve been introduced to this principle by clean code coach Ralf Westphal, who was the first to write about it in 2013. If you happen to speak German and want to explore the principle’s origins you should head over to [Software fraktal – Funktionale Abhängigkeit entschärfen](https://blog.ralfw.de/2013/04/software-fraktal-funktionale.html).
 
-> Functions shall either only contain logic or they shall only call other functions. -- Ralf Westphal, ![Integration Operation Segregation Principle](https://programming-with-ease.circle.so/c/articles/integration-operation-segregation-principle)
+> Functions shall either only contain logic or they shall only call other functions. -- Ralf Westphal, [Integration Operation Segregation Principle](https://programming-with-ease.circle.so/c/articles/integration-operation-segregation-principle)
 
 Let me put this somewhat more verbose: Functions shall either be an operation or an integration. An operation is a function containing only logic, where logic refers to control flow structures (e.g. if-else and while) and API calls to the standard or third-party libraries (e.g. `System.out.println`). An integration is a function containing only calls to other source code functions, i.e. operations and other integrations.
 
@@ -135,8 +135,7 @@ public class IOSPApp
 }
 ```
 
-You’ll find the two snippets at
-https://gist.github.com/joshuaju/f1949f8087b72227cdf9421a34525943.
+You’ll find the two snippets in my [github gists](https://gist.github.com/joshuaju/f1949f8087b72227cdf9421a34525943).
 
 # Zooming out
 
@@ -173,7 +172,7 @@ public Set<String> Business.extractUniqueWords(String fileName) { ... }
 public String DataAccess.readText(String fileName) { ... }
 // refactored solution
 public void UI.displayWords(Set<String> words) { ... }
-public Set<String> Business.extractUniqueWords(Stringtext) { ... }
+public Set<String> Business.extractUniqueWords(String text) { ... }
 public String DataAcess.readText(String fileName) { ... }
 ```
 
@@ -183,7 +182,7 @@ public String DataAcess.readText(String fileName) { ... }
 
 When I first learned about the IOSP I couldn’t foresee the effect it would have on me. After using it for more than a year I can say that it has fundamentally transformed the way I work! To the extent that it has become my daily companion; present throughout designing, implementing, refactoring and reviewing code. It’s usually the IOSP guiding my decisions and leading me to better solutions.
 
-> If there is one principle in clean code development that’s my north star, then that’s the Integration Operation Segregation Principle, the IOSP. It guides my code design, it guides my code refactoring, it guides my code reviews. -- Ralf Westphal, ![Integration Operation Segregation Principle](https://programming-with-ease.circle.so/c/articles/integration-operation-segregation-principle)
+> If there is one principle in clean code development that’s my north star, then that’s the Integration Operation Segregation Principle, the IOSP. It guides my code design, it guides my code refactoring, it guides my code reviews. -- Ralf Westphal, [Integration Operation Segregation Principle](https://programming-with-ease.circle.so/c/articles/integration-operation-segregation-principle)
 
 I’ve experienced that respecting the IOSP when designing code lead to higher collaboration. Features that would otherwise be implemented by 1-2 developers, could now be worked on by 4-5 without stepping on each other’s toes. This allowed features to be delivered quicker and to better distribute know-how between developers.
 
