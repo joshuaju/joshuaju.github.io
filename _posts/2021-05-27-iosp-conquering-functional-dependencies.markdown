@@ -13,7 +13,8 @@ I’ve been introduced to this principle by clean code coach Ralf Westphal, who 
 
 Let me put this somewhat more verbose: Functions shall either be an operation or an integration. An operation is a function containing only logic, where logic refers to control flow structures (e.g. if-else and while) and API calls to the standard or third-party libraries (e.g. System.out.println
 ). An integration is a function containing only calls to other source code functions, i.e. operations and other integrations.
-Exploring IOSP
+
+# Exploring IOSP
 
 Let’s explore this principle with an example: A customer wants you to process a text file to display the contained words. The words shall be displayed in uppercase and alphabetical order. For example, the file content “C b a c b A” should be displayed as “A B C”. A problem of that scale may be implemented in a single function and still be readable, but for the example’s sake let’s impose a three-layered architecture; presentation, business and data access. For now, let’s forget about IOSP and see what happens!
 
@@ -137,7 +138,7 @@ public class IOSPApp
 
 You’ll find the two snippets at
 https://gist.github.com/joshuaju/f1949f8087b72227cdf9421a34525943.
-Zooming out
+# Zooming out
 
 So what has happened here? Consider the dependency tree of the first implementation. main
 depends on displayWords
@@ -152,20 +153,21 @@ and readText
 are operations, so by definition they are independent of other (source code) functions.
 
 On the surface the two solutions may look alike. After all, method names and logic haven’t changed too much. However, looking at the dependency trees it is clear that something has changed indeed. Code that was previously nested and inter-dependent is now shallow and decoupled.
-Why should we care about IOSP?
+
+# Why should we care about IOSP?
 
 Thanks to applying the IOSP, the refactored solution has a few favorable qualities compared to the initial solution.
 
-Testability: It shouldn’t come as a surprise that decoupled code is easier to test compared to tightly coupled code. As seen in the dependency trees respecting the IOSP has decoupled presentation, business and data access layers from one another. Before the refactoring, testing the business logic required you to either (a) actually prepare text files to be read during a test, or (b) mock the data access layer. But now you just pass in the String text
+**Testability**: It shouldn’t come as a surprise that decoupled code is easier to test compared to tightly coupled code. As seen in the dependency trees respecting the IOSP has decoupled presentation, business and data access layers from one another. Before the refactoring, testing the business logic required you to either (a) actually prepare text files to be read during a test, or (b) mock the data access layer. But now you just pass in the String text
 , because the business logic doesn’t care about the text’s origin. It just knows how to extract those words.
 
-Readability: The IOSP has pulled up the relevant aspects of the program: read the text, extract the words, display them – it’s all in the very first function. Gathering that information from the initial solution would require you to read through three functions and filter out details and by then you involuntarily have read most of the code already.
+**Readability**: The IOSP has pulled up the relevant aspects of the program: read the text, extract the words, display them – it’s all in the very first function. Gathering that information from the initial solution would require you to read through three functions and filter out details and by then you involuntarily have read most of the code already.
 // excerpt from refactored main
 var text = dataAccess.readText(args[0]);
 var words = business.extractUniqueWords(text);
 ui.displayWords(words);
 
-Flexibility.: The initial solution is geared towards reading from a file – just take a look at the method signatures (see excerpt below). The requirement that words shall be read from a text file has proliferated into every layer. The design decision has run along with the dependencies from top to bottom. What if we’d want to read text from a database? Which places would you need to update? The refactored solution is much more welcoming to such change, as just one method needs to be updated or swapped.
+**Flexibility**: The initial solution is geared towards reading from a file – just take a look at the method signatures (see excerpt below). The requirement that words shall be read from a text file has proliferated into every layer. The design decision has run along with the dependencies from top to bottom. What if we’d want to read text from a database? Which places would you need to update? The refactored solution is much more welcoming to such change, as just one method needs to be updated or swapped.
 
 ```java
 // initial solution
@@ -178,8 +180,9 @@ public Set<String> Business.extractUniqueWords(Stringtext) { ... }
 public String DataAcess.readText(String fileName) { ... }
 ```
 
-Distributability: Decoupled code is not just easier to test and reason about, it’s also easier to distribute work when implementing it in the first place. In a design respecting the IOSP the heavy lifting is done in the operations, which are dependency-free. Consequently, if you know your operations, you know how many developers could potentially work together. Add one additional developer who writes an integration test in the meantime.
-Closing
+**Distributability**: Decoupled code is not just easier to test and reason about, it’s also easier to distribute work when implementing it in the first place. In a design respecting the IOSP the heavy lifting is done in the operations, which are dependency-free. Consequently, if you know your operations, you know how many developers could potentially work together. Add one additional developer who writes an integration test in the meantime.
+
+# Closing
 
 When I first learned about the IOSP I couldn’t foresee the effect it would have on me. After using it for more than a year I can say that it has fundamentally transformed the way I work! To the extent that it has become my daily companion; present throughout designing, implementing, refactoring and reviewing code. It’s usually the IOSP guiding my decisions and leading me to better solutions.
 
@@ -190,5 +193,7 @@ I’ve experienced that respecting the IOSP when designing code lead to higher c
 I’ve experienced that applying the IOSP motivated developers to write more and better tests. In a way, the test code mirrors the source code. So IOSP code encourages to write many, highly focused unit test (for operations) and few, more general integration tests (for integrations). These tests tend to require less setup and mocking code compared to tests of source code not following the IOSP.
 
 I’ve experienced that coming back to IOSP code after several months is relatively painless. Locating the place to make a specific change is easy: Skimming through integrations quickly reveals where you should take a closer look. At this point, you’ll have to read through some operations, which tend to stay small and focused, therefore still easy to understand.
+
+![iosp-tree](/assets/boc_iosp_tree-4.png)
 
 Finally, I want to encourage you to try the IOSP yourself! It’s a fundamental principle that should be part of every programmer’s tool kit and it’s unfortunate, that the principle isn’t commonly known and applied. However, remember that following a principle should never defeat the principle’s purpose! There are situations where following the IOSP may not be practical, which is perfectly fine. But most of the time I’d say the results speak for themselves (pun intended).
